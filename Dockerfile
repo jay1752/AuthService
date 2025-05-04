@@ -24,6 +24,12 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     ENVIRONMENT=production
 
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    procps \
+    && rm -rf /var/lib/apt/lists/*
+
 # Create a non-root user
 RUN addgroup --system app && \
     adduser --system --group app

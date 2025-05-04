@@ -70,7 +70,7 @@ docker-compose up -d
 ### Running in Production-like Mode Locally
 
 ```bash
-# Run with production configuration
+# Run with production configuration (default 2 gunicorn workers)
 SECRET_KEY=yoursecretkey docker-compose -f docker-compose.prod.yml up
 
 # Run with custom number of workers
