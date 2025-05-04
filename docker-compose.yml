@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=dev
+      - LOG_LEVEL=DEBUG
+      - SECRET_KEY=devsecretkey123
+    command: python start.py --reload
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s 

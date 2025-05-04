@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      - LOG_LEVEL=INFO
+      # In actual production, use secrets management for sensitive values
+      - SECRET_KEY=${SECRET_KEY}
+      - GUNICORN_WORKERS=${GUNICORN_WORKERS:-2}
+    command: python start.py --use-gunicorn --workers ${GUNICORN_WORKERS:-2}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M 
