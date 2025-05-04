@@ -94,3 +94,38 @@ The application includes:
 - Health check endpoints for liveness and readiness probes
 - Resource specification in Docker Compose
 - Container optimization for Kubernetes 
+
+## HOW TO?
+
+### Reset MySQL Data Locally
+
+```bash
+# Stop containers
+docker-compose down
+
+# Remove MySQL volume
+docker volume rm auth_service_mysql_data
+
+# Start containers with fresh data
+docker-compose up -d
+```
+
+### SQL Migrations
+
+The project includes a custom SQL migration system that tracks executed migrations in a `migrations` table.
+
+```bash
+# View available migration files
+python migrations/run.py --list
+
+# Run all pending migrations
+python migrations/run.py
+
+# Run a specific migration (without .sql extension)
+python migrations/run.py --file 001_create_buildings_table
+```
+
+To add a new migration:
+1. Create a new SQL file in the `migrations/sql/` directory with a numbered prefix (e.g., `002_add_users_table.sql`)
+2. Write your SQL statements, ending each with a semicolon (;)
+3. Run the migration script 

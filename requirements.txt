@@ -8,4 +8,7 @@ passlib>=1.7.4
 python-multipart>=0.0.6
 bcrypt>=3.5.0,<4.1.0
 httpx>=0.25.2
-pytest>=7.4.3 
+pytest>=7.4.3
+aiomysql==0.1.1
+PyMySQL==1.0.2
+cryptography>=41.0.0 
