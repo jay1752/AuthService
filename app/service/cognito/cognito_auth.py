@@ -215,8 +215,8 @@ class CognitoAuthService:
                 logger.debug("Calling Cognito change_password API")
                 await cognito.change_password(
                     AccessToken=access_token,
-                    OldPassword=old_password,
-                    NewPassword=new_password
+                    PreviousPassword=old_password,
+                    ProposedPassword=new_password
                 )
             
             logger.info("Successfully changed password")
@@ -409,7 +409,7 @@ class CognitoAuthService:
         """Refresh access token using refresh token with enhanced error handling."""
         logger.info("Attempting to refresh token")
         try:
-            token_endpoint = "https://us-west-2oy5e6oom4.auth.us-west-2.amazoncognito.com/oauth2/token"
+            token_endpoint = "https://us-west-247yhtxql8.auth.us-west-2.amazoncognito.com/oauth2/token"
             
             auth_str = f"{self.config.client_id}:{self.config.client_secret}"
             b64_auth = base64.b64encode(auth_str.encode()).decode()

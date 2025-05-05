@@ -166,9 +166,9 @@ async def refresh_token(refresh_token: str):
     }
 
 @router.post("/signout")
-async def sign_out(current_user: Dict[str, Any] = Depends(get_current_user)):
+async def sign_out(credentials: HTTPAuthorizationCredentials = Depends(security)):
     """Sign out user by revoking tokens"""
-    response = await auth_service.sign_out(current_user['access_token'])
+    response = await auth_service.sign_out(credentials.credentials)
     if not response.success:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -219,23 +219,24 @@ async def confirm_forgot_password(request: ConfirmForgotPasswordRequest):
 @router.post("/change-password")
 async def change_password(
     request: ChangePasswordRequest,
-    token: str = Depends(security)
+    credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     """Change user's password with token verification"""
     logger.info(f"Password change attempt for email: {request.email}")
     try:
         # First verify the token
-        user = await get_current_user(token)
-        if user.get('email') != request.email:
-            logger.error(f"Email mismatch for password change. Token email: {user.get('email')}, Request email: {request.email}")
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Email does not match the authenticated user"
-            )
+        user = await get_current_user(credentials)
+        #TODO: Check if username is same as db user_id for request.email
+        # if user.get('email') != request.email:
+        #     logger.error(f"Email mismatch for password change. Token email: {user.get('email')}, Request email: {request.email}")
+        #     raise HTTPException(
+        #         status_code=status.HTTP_403_FORBIDDEN,
+        #         detail="Email does not match the authenticated user"
+        #     )
 
         # Proceed with password change
         response = await auth_service.change_password(
-            token,
+            credentials.credentials,
             request.old_password,
             request.new_password
         )
@@ -252,11 +253,11 @@ async def change_password(
         raise
 
 @router.get("/user-attributes")
-async def get_user_attributes(current_user: Dict[str, Any] = Depends(get_current_user)):
+async def get_user_attributes(current_user: Dict[str, Any] = Depends(get_current_user),credentials: HTTPAuthorizationCredentials = Depends(security)):
     """Get user attributes"""
     logger.info(f"Fetching user attributes for email: {current_user.get('email')}")
     try:
-        response = await auth_service.get_user_attributes(current_user['access_token'])
+        response = await auth_service.get_user_attributes(credentials.credentials)
         if not response.success:
             logger.error(f"Failed to fetch user attributes for {current_user.get('email')}: {response.message}")
             raise HTTPException(
