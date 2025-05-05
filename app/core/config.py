@@ -41,5 +41,20 @@ class Settings(BaseSettings):
     # Log level
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
 
+    # AWS Cognito Settings
+    COGNITO_USER_POOL_ID: str = os.getenv("COGNITO_USER_POOL_ID", "")
+    COGNITO_CLIENT_ID: str = os.getenv("COGNITO_CLIENT_ID", "")
+    COGNITO_CLIENT_SECRET: str = os.getenv("COGNITO_CLIENT_SECRET", "")
+    COGNITO_REGION: str = os.getenv("COGNITO_REGION", "us-east-1")
+
+    def get_cognito_config(self) -> dict:
+        """Get Cognito configuration as a dictionary."""
+        return {
+            "user_pool_id": self.COGNITO_USER_POOL_ID,
+            "client_id": self.COGNITO_CLIENT_ID,
+            "client_secret": self.COGNITO_CLIENT_SECRET,
+            "region": self.COGNITO_REGION
+        }
+
 
 settings = Settings() 

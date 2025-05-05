@@ -1,11 +1,11 @@
-from typing import List
+from typing import Any, Dict, List
 from datetime import datetime
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 
 from app.services.db.mysql_client import mysql_client
-
+from app.service.cognito.cognito_verify import get_current_user
 router = APIRouter()
 
 
@@ -28,8 +28,8 @@ class Building(BaseModel):
     updated_at: datetime
 
 
-@router.get("/all_buildings", response_model=List[Building])
-async def get_all_buildings():
+@router.get("/all_buildings", response_model=List[Building], )
+async def get_all_buildings(current_user: Dict[str, Any] = Depends(get_current_user)):
     """
     Get all buildings from the database.
     """
