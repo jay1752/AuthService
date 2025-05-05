@@ -18,6 +18,7 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+from app.startup import startup_db_handler, shutdown_db_handler
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -94,10 +95,13 @@ async def startup_event():
     try:
         await token_verifier.initialize()
         logger.info("Token verifier initialized successfully")
+        await startup_db_handler()
+        logger.info("Database initialized successfully")
     except Exception as e:
         logger.error(f"Failed to initialize token verifier: {str(e)}")
         raise
 
 @app.on_event("shutdown")
 async def shutdown_event():
+    await shutdown_db_handler()
     logger.info("Shutting down Auth Service")
